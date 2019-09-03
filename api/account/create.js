@@ -7,8 +7,24 @@ const express = require('express'),
 router.route('/create').post(async function (req, res, next) {
     const {email, name, age} = req.body;
     const account = new Account({email, name, age});
-    await account.save();
-    return res.send({message: 'success'});
+
+    //check if email already exists
+    account.findOne({'email': email}, async function (err, data) {
+        if(err)
+        {
+            return res.status(500).send(err);
+        }
+        else if(data)
+        {
+            return res.status(400).send({err: 'email is not valid. already exists'});
+        }
+        else
+        {
+            await account.save();
+            return res.status(200).send({message: 'success'});
+        }
+        
+    });
 
     
 });
@@ -16,12 +32,3 @@ router.route('/create').post(async function (req, res, next) {
 
 module.exports = router;
 
-
-// module.exports = async function (req, res, next) {
-//     const {email, name, age} = req.body;
-//     const account = new Account ({email, name, age});
-//     await account.save();
-//     return res.send({message: 'success'});
-//
-//
-// };
