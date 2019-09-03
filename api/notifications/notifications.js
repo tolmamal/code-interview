@@ -1,3 +1,5 @@
+import {HTTP_STATUSES} from "../../utils/utils";
+
 const Notification = require('../../models/notification/Notification');
 
 const express = require('express'),
@@ -7,19 +9,17 @@ router.route('/notifications').post (async function (req, res, next) {
     const {accountId, name, color} = req.body;
     const notification = new Notification({accountId, name, color});
 
+    //check if accountId already exists in DB
     Notification.findOne({'accountId': accountId}, async function (err, data) {
-        if(err)
-        {
-            return res.status(500).send(err);
+        if(err) {
+            return res.status(HTTP_STATUSES.HTTP_SERVER_ERROR).send(err);
         }
-        if (data)
-        {
-            return res.status(400).send({err: 'accountId already exists'});
+        if (data) {
+            return res.status(HTTP_STATUSES.HTTP_BAD_INPUT).send({err: 'accountId already exists'});
         }
-        else
-        {
+        else {
             await notification.save();
-            return res.status(200).send({message: 'success'});
+            return res.status(HTTP_STATUSES.HTTP_OK).send({message: 'success'});
         }
         
     });
@@ -27,5 +27,10 @@ router.route('/notifications').post (async function (req, res, next) {
 }
 
 );
+
+
+
+
+
 
 module.exports = router;
