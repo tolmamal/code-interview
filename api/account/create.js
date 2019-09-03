@@ -13,12 +13,12 @@ router.route('/create').post(async function (req, res, next) {
     if(validator.isEmail(email))
     {
         //check if email already exists
-        account.findOne({'email': email}, async function (err, data) {
+        Account.findOne({'email': email}, async function (err, data) {
             if(err)
             {
                 return res.status(500).send(err);
             }
-            else if(data)
+            if(data)
             {
                 return res.status(400).send({err: 'email already exists'});
             }
