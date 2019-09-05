@@ -1,0 +1,2 @@
+mocha --timeout 10000 test/notification/
+mocha --timeout 10000 test/account/
